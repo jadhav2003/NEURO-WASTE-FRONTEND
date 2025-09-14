@@ -1,8 +1,8 @@
-const API_URL = "https://neuro-waste-backend.onrender.com"; // replace after Render deploy
+const API_URL = "https://neuro-waste-backend.onrender.com"; // your deployed backend URL
 
 async function loadBins() {
   try {
-    const res = await fetch(API_URL + "/bins");
+    const res = await fetch(API_URL + "/bins"); // ✅ correct endpoint
     const data = await res.json();
     const binsDiv = document.getElementById("bins");
     const status = document.getElementById("status");
