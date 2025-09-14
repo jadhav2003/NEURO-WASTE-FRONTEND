@@ -1,4 +1,4 @@
-const API_URL = "https://your-backend.onrender.com"; // replace after Render deploy
+const API_URL = "https://neuro-waste-backend.onrender.com"; // replace after Render deploy
 
 async function loadBins() {
   try {
