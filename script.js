@@ -7,6 +7,8 @@ async function loadBins() {
     const binsDiv = document.getElementById("bins");
     const status = document.getElementById("status");
 
+    console.log("📥 Raw bins data:", data); // ✅ Debugging
+
     status.textContent = "🟢 Connected to backend";
 
     let html = "";
@@ -14,7 +16,10 @@ async function loadBins() {
       html = "<p>No bins yet. Add one using /update API.</p>";
     } else {
       for (const bin in data) {
-        const level = Number(data[bin].level);
+        // ✅ Make sure level is a valid number
+        const levelRaw = data[bin]?.level;
+        const level = Number(levelRaw) || 0;
+
         let stateClass = "ok";
         let label = "✅ OK";
         if (level > 80) { stateClass = "full"; label = "⚠️ Full"; }
@@ -33,9 +38,11 @@ async function loadBins() {
     }
     binsDiv.innerHTML = html;
   } catch (err) {
+    console.error("❌ Error loading bins:", err);
     document.getElementById("status").textContent = "🔴 Could not connect to backend";
   }
 }
 
+// ✅ First load + refresh every 5 sec
 loadBins();
 setInterval(loadBins, 5000);
