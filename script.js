@@ -1,5 +1,3 @@
-// script.js
-
 let chartInstances = {};
 
 document.getElementById("csvFile").addEventListener("change", function (event) {
@@ -87,13 +85,9 @@ function renderLocalities(data) {
       values.push(avg.toFixed(2));
     }
 
-    // Horizontal card: locality + chart + table in single row
+    // card layout
     const card = document.createElement("div");
     card.className = "locality-section";
-    card.style.display = "flex";
-    card.style.alignItems = "flex-start";
-    card.style.gap = "30px";
-    card.style.marginBottom = "25px";
 
     card.innerHTML = `
       <div class="locality-header" style="min-width:150px;">📍 ${locality}</div>
@@ -120,3 +114,4 @@ function renderLocalities(data) {
     renderChart(`chartCanvas_${index}`, labels, values);
   });
 }
+
