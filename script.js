@@ -9,7 +9,7 @@ async function loadBins() {
 
     console.log("📥 Raw bins data:", data); // ✅ Debugging
 
-    status.textContent = "🟢 Connected to backend";
+    status.textContent = "🟢 Welcome to SmartBin Records";
 
     let html = "";
     if (!data || Object.keys(data).length === 0) {
