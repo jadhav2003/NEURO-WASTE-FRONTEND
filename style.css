@@ -9,6 +9,21 @@ header {
   background: #2c3e50;
   color: white;
   padding: 15px 30px;
+  text-align: center;
+}
+
+.file-upload {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 25px 0;
+}
+
+#csvFile {
+  padding: 10px;
+  border: 2px solid #2c3e50;
+  border-radius: 8px;
+  cursor: pointer;
 }
 
 #localitiesContainer {
@@ -36,6 +51,11 @@ header {
   background: #fff;
   padding: 10px;
   border-radius: 8px;
+}
+
+canvas {
+  width: 250px !important;
+  height: 250px !important;
 }
 
 table {
