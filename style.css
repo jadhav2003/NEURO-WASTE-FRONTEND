@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: "Segoe UI", Tahoma, sans-serif;
+  font-family: Arial, sans-serif;
   background: #f4f6f9;
   color: #333;
 }
@@ -9,79 +9,47 @@ header {
   background: #2c3e50;
   color: white;
   padding: 15px 30px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-h1 {
-  margin: 0;
-}
-
-input[type="file"] {
-  background: white;
-  padding: 6px 12px;
-  border-radius: 5px;
-  border: none;
 }
 
 #localitiesContainer {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  padding: 30px;
+  padding: 20px;
 }
 
-.dashboard-card {
+.locality-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+  margin-bottom: 25px;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   padding: 20px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-.dashboard-card h2 {
-  margin-bottom: 15px;
-  font-size: 18px;
-  color: #2c3e50;
-}
-
-.chart-container {
-  position: relative;
-  width: 180px;
-  height: 180px;
-  margin-bottom: 15px;
-}
-
-.chart-center-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 22px;
+.locality-header {
   font-weight: bold;
-  color: #2c3e50;
+  font-size: 18px;
+  min-width: 150px;
 }
 
-.table-list {
-  width: 100%;
-  margin-top: 10px;
+.card {
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
 }
 
-.table-list table {
-  width: 100%;
+table {
   border-collapse: collapse;
-}
-
-.table-list th, .table-list td {
-  padding: 6px;
-  text-align: left;
+  width: 100%;
   font-size: 14px;
 }
 
-.table-list th {
-  background: #f0f0f0;
+th, td {
+  border: 1px solid #ddd;
+  padding: 6px;
+}
+
+th {
+  background: #4CAF50;
+  color: white;
 }
