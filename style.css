@@ -1,107 +1,44 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f7fb;
-  color: #333;
-}
-
-header {
-  background: #1a1f36;
-  color: white;
-  padding: 15px;
-  text-align: center;
-}
-
-#csvFile {
-  margin: 20px auto;
-  display: block;
-}
-
-.locality-section {
-  margin: 30px auto;
-  padding: 20px;
-  max-width: 1200px;
-}
-
-.locality-header {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  text-align: left;
-  color: #222;
-}
-
-.dashboard {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-.card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.card h3 {
-  margin: 15px 0 10px;
-  font-size: 16px;
-  color: #444;
-}
-
-.circle {
-  width: 120px;
-  height: 120px;
-  margin: 0 auto;
-  border-radius: 50%;
-  border: 10px solid #eee;
-  position: relative;
-}
-
-.circle-progress {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  clip: rect(0, 120px, 120px, 60px);
-}
-
-.circle-progress .progress-fill {
-  position: absolute;
-  width: 120px;
-  height: 120px;
-  border: 10px solid #007bff;
-  border-radius: 50%;
-  clip: rect(0, 60px, 120px, 0);
-  transform: rotate(0deg);
-  transition: transform 1s ease;
-}
-
-.circle-inner {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  font-weight: bold;
-  font-size: 18px;
-}
-
-.card ul {
-  list-style: none;
   padding: 0;
-  margin-top: 15px;
-  font-size: 13px;
-  text-align: left;
+  font-family: Arial, sans-serif;
+
+  /* background image */
+  background: url("images/b5ff0636-8228-4726-8c3c-73bce4238615.png") no-repeat center center fixed;
+  background-size: cover;
 }
 
-.card ul li {
+/* overlay so text & charts stay readable */
+.overlay {
+  background-color: rgba(255, 255, 255, 0.85);
+  min-height: 100vh;
+  padding: 30px;
+}
+
+/* card style */
+.locality-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   display: flex;
-  justify-content: space-between;
-  padding: 4px 0;
-  border-bottom: 1px solid #eee;
+  align-items: flex-start;
+  gap: 30px;
+  margin-bottom: 25px;
+}
+
+/* tables */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+th {
+  background-color: #4CAF50;
+  color: white;
 }
