@@ -13,12 +13,12 @@ document.getElementById("csvFile").addEventListener("change", function (event) {
   });
 });
 
-function renderChart(canvasId, labels, values, total) {
+function renderChart(canvasId, labels, values) {
   if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
 
   const ctx = document.getElementById(canvasId).getContext("2d");
   chartInstances[canvasId] = new Chart(ctx, {
-    type: "doughnut", // ✅ donut chart
+    type: "pie",
     data: {
       labels: labels,
       datasets: [
@@ -35,14 +35,13 @@ function renderChart(canvasId, labels, values, total) {
             "#FFC107",
             "#00BCD4",
           ],
-          borderWidth: 2,
         },
       ],
     },
     options: {
-      cutout: "70%", // ✅ makes it donut style
+      responsive: true,
       plugins: {
-        legend: { display: false }, // hide legend (we show table instead)
+        legend: { position: "right" },
         tooltip: {
           callbacks: {
             label: function (context) {
@@ -52,25 +51,6 @@ function renderChart(canvasId, labels, values, total) {
         },
       },
     },
-    plugins: [
-      {
-        id: "centerText",
-        beforeDraw: function (chart) {
-          const { width } = chart;
-          const { height } = chart;
-          const ctx = chart.ctx;
-          ctx.restore();
-          ctx.font = "bold 18px Segoe UI";
-          ctx.textBaseline = "middle";
-          ctx.fillStyle = "#2c3e50";
-          const text = total + " Avg";
-          const textX = Math.round((width - ctx.measureText(text).width) / 2);
-          const textY = height / 2;
-          ctx.fillText(text, textX, textY);
-          ctx.save();
-        },
-      },
-    ],
   });
 }
 
@@ -105,20 +85,16 @@ function renderLocalities(data) {
       values.push(avg.toFixed(2));
     }
 
-    const totalAvg =
-      values.reduce((a, b) => parseFloat(a) + parseFloat(b), 0) /
-      values.length;
-
+    // Horizontal card: locality + chart + table in single row
     const card = document.createElement("div");
-    card.className = "dashboard-card";
+    card.className = "locality-section";
 
     card.innerHTML = `
-      <h2>${locality}</h2>
-      <div class="chart-container">
+      <div class="locality-header">📍 ${locality}</div>
+      <div class="card" style="flex:0 0 250px;">
         <canvas id="chartCanvas_${index}"></canvas>
-        <div class="chart-center-text">${totalAvg.toFixed(1)}%</div>
       </div>
-      <div class="table-list">
+      <div class="card" style="flex:0 0 auto;">
         <table>
           <thead>
             <tr><th>Waste Type</th><th>Avg Confidence (%)</th></tr>
@@ -135,6 +111,6 @@ function renderLocalities(data) {
     `;
 
     container.appendChild(card);
-    renderChart(`chartCanvas_${index}`, labels, values, totalAvg.toFixed(1));
+    renderChart(`chartCanvas_${index}`, labels, values);
   });
 }
