@@ -2,12 +2,12 @@ body {
   margin: 0;
   font-family: "Segoe UI", Tahoma, sans-serif;
   background: #f4f6f9;
-  color: #444;
+  color: #333;
 }
 
 header {
   background: #2c3e50;
-  color: black;
+  color: white;
   padding: 15px 30px;
   display: flex;
   align-items: center;
