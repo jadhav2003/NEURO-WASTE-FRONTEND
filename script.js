@@ -1,48 +1,122 @@
-const API_URL = "https://neuro-waste-backend.onrender.com"; // your deployed backend URL
+// script.js
 
-async function loadBins() {
-  try {
-    const res = await fetch(API_URL + "/bins"); // ✅ correct endpoint
-    const data = await res.json();
-    const binsDiv = document.getElementById("bins");
-    const status = document.getElementById("status");
+let chartInstances = {};
 
-    console.log("📥 Raw bins data:", data); // ✅ Debugging
+document.getElementById("csvFile").addEventListener("change", function (event) {
+  const file = event.target.files[0];
+  if (!file) return;
 
-    status.textContent = "🟢 Welcome to SmartBin Records";
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete: function (results) {
+      renderLocalities(results.data);
+    },
+  });
+});
 
-    let html = "";
-    if (!data || Object.keys(data).length === 0) {
-      html = "<p>No bins yet. Add one using /update API.</p>";
-    } else {
-      for (const bin in data) {
-        // ✅ Make sure level is a valid number
-        const levelRaw = data[bin]?.level;
-        const level = Number(levelRaw) || 0;
+function renderChart(canvasId, labels, values) {
+  if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
 
-        let stateClass = "ok";
-        let label = "✅ OK";
-        if (level > 80) { stateClass = "full"; label = "⚠️ Full"; }
-        else if (level > 60) { stateClass = "warn"; label = "⚠️ Warning"; }
-
-        html += `
-          <div class="bin-card">
-            <div class="bin-title">🗑️ Bin ${bin.replace("bin_", "")}</div>
-            <div>${level}% ${label}</div>
-            <div class="progress">
-              <div class="progress-bar ${stateClass}" style="width: ${level}%;"></div>
-            </div>
-          </div>
-        `;
-      }
-    }
-    binsDiv.innerHTML = html;
-  } catch (err) {
-    console.error("❌ Error loading bins:", err);
-    document.getElementById("status").textContent = "🔴 Could not connect to backend";
-  }
+  const ctx = document.getElementById(canvasId).getContext("2d");
+  chartInstances[canvasId] = new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Average Confidence (%)",
+          data: values,
+          backgroundColor: [
+            "#4CAF50",
+            "#FF9800",
+            "#2196F3",
+            "#9C27B0",
+            "#FF5722",
+            "#607D8B",
+            "#FFC107",
+            "#00BCD4",
+          ],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "right" },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              return context.label + ": " + context.raw + "%";
+            },
+          },
+        },
+      },
+    },
+  });
 }
 
-// ✅ First load + refresh every 5 sec
-loadBins();
-setInterval(loadBins, 5000);
+function renderLocalities(data) {
+  const container = document.getElementById("localitiesContainer");
+  container.innerHTML = "";
+
+  const localityMap = {};
+  data.forEach((row) => {
+    const locality = row["Locality"] || "Unknown Locality";
+    if (!localityMap[locality]) localityMap[locality] = [];
+    localityMap[locality].push(row);
+  });
+
+  Object.keys(localityMap).forEach((locality, index) => {
+    const rows = localityMap[locality];
+
+    const wasteMap = {};
+    rows.forEach((row) => {
+      const type = row["Waste_Type"] || "Unknown";
+      const confidence = parseFloat(row["Confidence(%)"]) || 0;
+      if (!wasteMap[type]) wasteMap[type] = [];
+      wasteMap[type].push(confidence);
+    });
+
+    const labels = [];
+    const values = [];
+    for (let type in wasteMap) {
+      const avg =
+        wasteMap[type].reduce((a, b) => a + b, 0) / wasteMap[type].length;
+      labels.push(type);
+      values.push(avg.toFixed(2));
+    }
+
+    // Horizontal card: locality + chart + table in single row
+    const card = document.createElement("div");
+    card.className = "locality-section";
+    card.style.display = "flex";
+    card.style.alignItems = "flex-start";
+    card.style.gap = "30px";
+    card.style.marginBottom = "25px";
+
+    card.innerHTML = `
+      <div class="locality-header" style="min-width:150px;">📍 ${locality}</div>
+      <div class="card" style="flex:0 0 250px;">
+        <canvas id="chartCanvas_${index}"></canvas>
+      </div>
+      <div class="card" style="flex:0 0 auto;">
+        <table>
+          <thead>
+            <tr><th>Waste Type</th><th>Avg Confidence (%)</th></tr>
+          </thead>
+          <tbody>
+            ${labels
+              .map(
+                (type, i) => `<tr><td>${type}</td><td>${values[i]}</td></tr>`
+              )
+              .join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    container.appendChild(card);
+    renderChart(`chartCanvas_${index}`, labels, values);
+  });
+}
