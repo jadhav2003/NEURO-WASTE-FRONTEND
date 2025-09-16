@@ -40,6 +40,7 @@ function renderChart(canvasId, labels, values) {
     },
     options: {
       responsive: true,
+      devicePixelRatio: 3, // make chart sharper (higher resolution)
       plugins: {
         legend: { position: "right" },
         tooltip: {
