@@ -1,3 +1,5 @@
+// script.js
+
 let chartInstances = {};
 
 document.getElementById("csvFile").addEventListener("change", function (event) {
@@ -88,9 +90,13 @@ function renderLocalities(data) {
     // Horizontal card: locality + chart + table in single row
     const card = document.createElement("div");
     card.className = "locality-section";
+    card.style.display = "flex";
+    card.style.alignItems = "flex-start";
+    card.style.gap = "30px";
+    card.style.marginBottom = "25px";
 
     card.innerHTML = `
-      <div class="locality-header">📍 ${locality}</div>
+      <div class="locality-header" style="min-width:150px;">📍 ${locality}</div>
       <div class="card" style="flex:0 0 250px;">
         <canvas id="chartCanvas_${index}"></canvas>
       </div>
