@@ -7,44 +7,35 @@
   <link rel="stylesheet" href="style.css"/>
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- PapaParse -->
+  <!-- PapaParse for CSV -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
 </head>
 <body>
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <h2>♻️ NeuroWaste</h2>
-    <nav>
-      <a href="#">Dashboard</a>
-      <a href="#">Reports</a>
-      <a href="#">Insights</a>
-    </nav>
-  </aside>
+  <!-- Header -->
+  <header>
+    <h1>♻️ NeuroWaste Analytics</h1>
+    <button id="themeToggle">🌙</button>
+  </header>
 
   <!-- Main Content -->
-  <main class="main-content">
-    <header>
-      <h1>AI-Driven Waste Segregation</h1>
-    </header>
-
-    <!-- File Upload -->
+  <main>
+    <!-- Upload Section -->
     <section class="upload-section">
-      <label for="csvFile" class="upload-label">📂 Upload CSV File</label>
-      <input type="file" id="csvFile" accept=".csv"/>
+      <label for="csvFile" class="upload-label">📂 Upload CSV</label>
+      <input type="file" id="csvFile" accept=".csv" />
     </section>
 
-    <!-- Filter Dropdown -->
-    <section class="filter-section">
-      <label for="localityFilter">Filter by Locality:</label>
-      <select id="localityFilter">
-        <option value="all">All Localities</option>
-      </select>
+    <!-- Insights -->
+    <section id="insights" class="card insights">
+      <h2>📊 Insights</h2>
+      <ul id="insightsList"></ul>
     </section>
 
-    <!-- Localities Data -->
-    <section id="localitiesContainer" class="localities"></section>
+    <!-- Charts & Tables -->
+    <section id="localitiesContainer"></section>
   </main>
 
   <script src="script.js"></script>
 </body>
 </html>
+s
