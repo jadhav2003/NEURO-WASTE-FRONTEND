@@ -38,6 +38,21 @@ input[type="file"] {
   cursor: pointer;
 }
 
+/* Dropdown */
+.dropdown {
+  margin: 15px 0;
+}
+.dropdown label {
+  font-weight: bold;
+  margin-right: 8px;
+}
+.dropdown select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #1976d2;
+  font-size: 14px;
+}
+
 .locality-section {
   display: flex;
   align-items: flex-start;
@@ -94,7 +109,6 @@ th {
   animation: pulse 2s infinite;
 }
 
-/* Animation effect */
 @keyframes pulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.05); }
