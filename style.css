@@ -1,45 +1,91 @@
 body {
   font-family: Arial, sans-serif;
   margin: 0;
+  padding: 0;
+  background: url('background.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #333;
+}
+
+.container {
   padding: 20px;
-  background: #f9f9f9;
-}
-
-.upload-container {
   text-align: center;
-  margin-bottom: 30px;
 }
 
-#csvFile {
+h1 {
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+input[type="file"] {
+  margin: 20px auto;
+  display: block;
   padding: 10px;
-  font-size: 16px;
+  border: 2px solid #4caf50;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
 }
 
 .locality-section {
   display: flex;
   align-items: flex-start;
   gap: 30px;
-  margin-bottom: 30px;
+  margin: 25px 0;
   padding: 20px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .locality-header {
-  font-weight: bold;
   font-size: 18px;
-  min-width: 150px;
+  font-weight: bold;
+  color: #2c3e50;
 }
 
 .card {
   background: #fff;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 15px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-canvas {
-  width: 260px !important;
-  height: 260px !important;
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+th {
+  background: #4caf50;
+  color: white;
+}
+
+/* Floating Note */
+.floating-note {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #4caf50;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 9999;
+  animation: pulse 2s infinite;
+}
+
+/* Animation effect */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
