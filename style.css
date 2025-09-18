@@ -1,65 +1,50 @@
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
-  padding: 0;
-  background: url('background.png') no-repeat center center fixed;
-  background-size: cover;
+  font-family: Arial, sans-serif;
+  background: #f4f8fb;
   color: #333;
 }
 
-/* Top Heading Banner */
-.main-header {
-  background: #1976d2; /* Blue */
+header {
+  background: #1976d2;
   color: white;
-  text-align: center;
-  padding: 20px;
-  font-size: 28px;
-  font-weight: bold;
-  letter-spacing: 1px;
-}
-
-.container {
-  padding: 20px;
+  padding: 15px;
   text-align: center;
 }
 
 h1 {
-  margin-bottom: 20px;
-  color: #2c3e50;
+  margin: 0;
+  font-size: 28px;
 }
 
-input[type="file"] {
-  margin: 20px auto;
-  display: block;
-  padding: 10px;
-  border: 2px solid #4caf50;
-  border-radius: 8px;
-  background: white;
-  cursor: pointer;
+.file-upload {
+  text-align: center;
+  margin: 20px 0;
 }
 
 .locality-section {
   display: flex;
   align-items: flex-start;
   gap: 30px;
-  margin: 25px 0;
+  margin: 25px auto;
+  max-width: 1000px;
+  background: white;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.9);
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
 }
 
 .locality-header {
-  font-size: 18px;
   font-weight: bold;
-  color: #2c3e50;
+  font-size: 18px;
+  margin-bottom: 10px;
 }
 
 .card {
-  background: #fff;
-  border-radius: 10px;
+  background: #fafafa;
   padding: 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  flex: 1;
 }
 
 table {
@@ -67,36 +52,31 @@ table {
   width: 100%;
 }
 
-th, td {
-  border: 1px solid #ccc;
-  padding: 8px 12px;
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px;
   text-align: center;
 }
 
-th {
-  background: #4caf50;
+table th {
+  background: #1976d2;
   color: white;
 }
 
-/* Floating Note */
-.floating-note {
+#floatingNote {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background: #4caf50;
+  background: #ff9800;
   color: white;
   padding: 12px 18px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  font-size: 16px;
+  border-radius: 8px;
   font-weight: bold;
-  z-index: 9999;
-  animation: pulse 2s infinite;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+  animation: floatNote 3s infinite alternate;
 }
 
-/* Animation effect */
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+@keyframes floatNote {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-8px); }
 }
