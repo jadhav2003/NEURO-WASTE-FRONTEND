@@ -80,7 +80,7 @@ th {
 
 /* Floating Note */
 .floating-note {
-  position: fixed;
+  position: moving;
   bottom: 20px;
   right: 20px;
   background: #4caf50;
