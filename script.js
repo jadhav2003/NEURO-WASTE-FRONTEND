@@ -1,5 +1,4 @@
 let chartInstances = {};
-let globalData = []; // store parsed CSV data
 
 document.getElementById("csvFile").addEventListener("change", function (event) {
   const file = event.target.files[0];
@@ -9,36 +8,13 @@ document.getElementById("csvFile").addEventListener("change", function (event) {
     header: true,
     skipEmptyLines: true,
     complete: function (results) {
-      globalData = results.data;
-      populateFilter(globalData);
-      renderLocalities(globalData);
+      renderLocalities(results.data);
+      generateInsights(results.data);
     },
   });
 });
 
-function populateFilter(data) {
-  const filter = document.getElementById("localityFilter");
-  filter.innerHTML = `<option value="all">All Localities</option>`;
-
-  const localities = [...new Set(data.map(row => row["Locality"] || "Unknown Locality"))];
-  localities.forEach(locality => {
-    const option = document.createElement("option");
-    option.value = locality;
-    option.textContent = locality;
-    filter.appendChild(option);
-  });
-
-  filter.addEventListener("change", () => {
-    const selected = filter.value;
-    if (selected === "all") {
-      renderLocalities(globalData);
-    } else {
-      const filtered = globalData.filter(row => (row["Locality"] || "Unknown Locality") === selected);
-      renderLocalities(filtered);
-    }
-  });
-}
-
+// Chart render function
 function renderChart(canvasId, labels, values) {
   if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
 
@@ -49,7 +25,7 @@ function renderChart(canvasId, labels, values) {
       labels: labels,
       datasets: [
         {
-          label: "Average Confidence (%)",
+          label: "Avg Confidence (%)",
           data: values,
           backgroundColor: [
             "#4CAF50", "#FF9800", "#2196F3",
@@ -62,7 +38,7 @@ function renderChart(canvasId, labels, values) {
     options: {
       responsive: true,
       plugins: {
-        legend: { position: "right", labels: { color: "#fff" } },
+        legend: { position: "right" },
         tooltip: {
           callbacks: {
             label: function (context) {
@@ -75,6 +51,7 @@ function renderChart(canvasId, labels, values) {
   });
 }
 
+// Render each locality with chart + table
 function renderLocalities(data) {
   const container = document.getElementById("localitiesContainer");
   container.innerHTML = "";
@@ -113,15 +90,49 @@ function renderLocalities(data) {
       <div class="card"><canvas id="chartCanvas_${index}"></canvas></div>
       <div class="card">
         <table>
-          <thead><tr><th>Waste Type</th><th>Avg Confidence (%)</th></tr></thead>
+          <thead>
+            <tr><th>Waste Type</th><th>Avg Confidence (%)</th></tr>
+          </thead>
           <tbody>
-            ${labels.map((type, i) => `<tr><td>${type}</td><td>${values[i]}</td></tr>`).join("")}
+            ${labels
+              .map(
+                (type, i) =>
+                  `<tr><td>${type}</td><td>${values[i]}</td></tr>`
+              )
+              .join("")}
           </tbody>
         </table>
       </div>
     `;
-
     container.appendChild(card);
     renderChart(`chartCanvas_${index}`, labels, values);
   });
 }
+
+// Generate insights from CSV
+function generateInsights(data) {
+  const list = document.getElementById("insightsList");
+  list.innerHTML = "";
+
+  let total = data.length;
+  let avgConfidence =
+    data.reduce((sum, row) => sum + (parseFloat(row["Confidence(%)"]) || 0), 0) /
+    total;
+
+  let highConf = data.filter(
+    (row) => parseFloat(row["Confidence(%)"]) > 80
+  ).length;
+
+  list.innerHTML = `
+    <li>📌 Total records: <b>${total}</b></li>
+    <li>📌 Average Confidence: <b>${avgConfidence.toFixed(2)}%</b></li>
+    <li>📌 High Confidence (>80%): <b>${highConf}</b> entries</li>
+  `;
+}
+
+// Theme Toggle
+document.getElementById("themeToggle").addEventListener("click", () => {
+  document.body.classList.toggle("light");
+  document.getElementById("themeToggle").textContent =
+    document.body.classList.contains("light") ? "☀️" : "🌙";
+});
