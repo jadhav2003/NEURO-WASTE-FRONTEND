@@ -1,6 +1,5 @@
-// script.js 
-
 let chartInstances = {};
+let globalData = []; // store parsed CSV data
 
 document.getElementById("csvFile").addEventListener("change", function (event) {
   const file = event.target.files[0];
@@ -10,10 +9,35 @@ document.getElementById("csvFile").addEventListener("change", function (event) {
     header: true,
     skipEmptyLines: true,
     complete: function (results) {
-      renderLocalities(results.data);
+      globalData = results.data;
+      populateFilter(globalData);
+      renderLocalities(globalData);
     },
   });
 });
+
+function populateFilter(data) {
+  const filter = document.getElementById("localityFilter");
+  filter.innerHTML = `<option value="all">All Localities</option>`;
+
+  const localities = [...new Set(data.map(row => row["Locality"] || "Unknown Locality"))];
+  localities.forEach(locality => {
+    const option = document.createElement("option");
+    option.value = locality;
+    option.textContent = locality;
+    filter.appendChild(option);
+  });
+
+  filter.addEventListener("change", () => {
+    const selected = filter.value;
+    if (selected === "all") {
+      renderLocalities(globalData);
+    } else {
+      const filtered = globalData.filter(row => (row["Locality"] || "Unknown Locality") === selected);
+      renderLocalities(filtered);
+    }
+  });
+}
 
 function renderChart(canvasId, labels, values) {
   if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
@@ -28,14 +52,9 @@ function renderChart(canvasId, labels, values) {
           label: "Average Confidence (%)",
           data: values,
           backgroundColor: [
-            "#4CAF50",
-            "#FF9800",
-            "#2196F3",
-            "#9C27B0",
-            "#FF5722",
-            "#607D8B",
-            "#FFC107",
-            "#00BCD4",
+            "#4CAF50", "#FF9800", "#2196F3",
+            "#9C27B0", "#FF5722", "#607D8B",
+            "#FFC107", "#00BCD4",
           ],
         },
       ],
@@ -43,7 +62,7 @@ function renderChart(canvasId, labels, values) {
     options: {
       responsive: true,
       plugins: {
-        legend: { position: "right" },
+        legend: { position: "right", labels: { color: "#fff" } },
         tooltip: {
           callbacks: {
             label: function (context) {
@@ -69,8 +88,8 @@ function renderLocalities(data) {
 
   Object.keys(localityMap).forEach((locality, index) => {
     const rows = localityMap[locality];
-
     const wasteMap = {};
+
     rows.forEach((row) => {
       const type = row["Waste_Type"] || "Unknown";
       const confidence = parseFloat(row["Confidence(%)"]) || 0;
@@ -87,30 +106,16 @@ function renderLocalities(data) {
       values.push(avg.toFixed(2));
     }
 
-    // Horizontal card: locality + chart + table in single row
     const card = document.createElement("div");
     card.className = "locality-section";
-    card.style.display = "flex";
-    card.style.alignItems = "flex-start";
-    card.style.gap = "30px";
-    card.style.marginBottom = "25px";
-
     card.innerHTML = `
-      <div class="locality-header" style="min-width:150px;">📍 ${locality}</div>
-      <div class="card" style="flex:0 0 250px;">
-        <canvas id="chartCanvas_${index}"></canvas>
-      </div>
-      <div class="card" style="flex:0 0 auto;">
+      <div class="locality-header">📍 ${locality}</div>
+      <div class="card"><canvas id="chartCanvas_${index}"></canvas></div>
+      <div class="card">
         <table>
-          <thead>
-            <tr><th>Waste Type</th><th>Avg Confidence (%)</th></tr>
-          </thead>
+          <thead><tr><th>Waste Type</th><th>Avg Confidence (%)</th></tr></thead>
           <tbody>
-            ${labels
-              .map(
-                (type, i) => `<tr><td>${type}</td><td>${values[i]}</td></tr>`
-              )
-              .join("")}
+            ${labels.map((type, i) => `<tr><td>${type}</td><td>${values[i]}</td></tr>`).join("")}
           </tbody>
         </table>
       </div>
