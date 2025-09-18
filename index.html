@@ -5,26 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NeuroWaste Dashboard</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- PapaParse -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <header>
-    <h1>♻️ NeuroWaste Dashboard</h1>
-  </header>
+  <div class="upload-container">
+    <h2>📂 Upload Waste Data (CSV)</h2>
+    <input type="file" id="csvFile" accept=".csv">
+  </div>
 
-  <main>
-    <!-- File Upload -->
-    <div class="upload-box">
-      <label for="csvFile" class="upload-label">📂 Upload CSV File</label>
-      <input type="file" id="csvFile" accept=".csv" hidden>
-    </div>
-
-    <!-- Localities + Charts -->
-    <div id="localitiesContainer"></div>
-  </main>
+  <div id="localitiesContainer"></div>
 
   <script src="script.js"></script>
 </body>
