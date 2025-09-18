@@ -15,13 +15,23 @@
 
   <div class="container">
     <h1>NeuroWaste Dashboard</h1>
+
+    <!-- File Upload -->
     <input type="file" id="csvFile" accept=".csv">
+
+    <!-- Chart Type Dropdown -->
+    <div class="dropdown">
+      <label for="chartType">Chart Type:</label>
+      <select id="chartType">
+        <option value="pie">Pie</option>
+        <option value="bar">Bar</option>
+        <option value="line">Line</option>
+      </select>
+    </div>
+
+    <!-- Locality Data -->
     <div id="localitiesContainer"></div>
   </div>
 
   <!-- Floating Note -->
-  <div class="floating-note">♻️ Please throw waste in Neuro Bins</div>
-
-  <script src="script.js"></script>
-</body>
-</html>
+  <div class="floating-note">♻️ Please throw waste in Neuro
