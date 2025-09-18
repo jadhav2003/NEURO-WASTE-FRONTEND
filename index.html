@@ -2,19 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NeuroWaste Recordchart</title>
+  <title>NeuroWaste Record sheets</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <div class="upload-container">
-    <h2>📂 Upload Waste Data sheet(CSV)</h2>
+  <div class="container">
+    <h1>NeuroWaste bins</h1>
     <input type="file" id="csvFile" accept=".csv">
+    <div id="localitiesContainer"></div>
   </div>
 
-  <div id="localitiesContainer"></div>
+  <!-- Floating Note -->
+  <div class="floating-note">♻️ Please throw waste in Neuro Bins</div>
 
   <script src="script.js"></script>
 </body>
