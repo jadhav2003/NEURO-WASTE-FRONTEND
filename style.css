@@ -7,6 +7,17 @@ body {
   color: #333;
 }
 
+/* Top Heading Banner */
+.main-header {
+  background: #1976d2; /* Blue */
+  color: white;
+  text-align: center;
+  padding: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
 .container {
   padding: 20px;
   text-align: center;
