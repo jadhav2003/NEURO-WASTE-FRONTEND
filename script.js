@@ -1,69 +1,33 @@
-let chartInstances = {};
-
-// File Upload Handling
-document.getElementById("csvFile").addEventListener("change", function (event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  Papa.parse(file, {
-    header: true,
-    skipEmptyLines: true,
-    complete: function (results) {
-      renderLocalities(results.data);
-    },
-  });
-});
-
-function renderChart(canvasId, labels, values) {
-  if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
-
-  const ctx = document.getElementById(canvasId).getContext("2d");
-
-  chartInstances[canvasId] = new Chart(ctx, {
-    type: "pie",
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: "Average Confidence (%)",
-          data: values,
-          backgroundColor: [
-            "#4CAF50", "#FF9800", "#2196F3",
-            "#9C27B0", "#FF5722", "#607D8B",
-            "#FFC107", "#00BCD4",
-          ],
-          borderColor: "#fff",
-          borderWidth: 1
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: "right" },
-        tooltip: {
-          callbacks: {
-            label: function (context) {
-              return context.label + ": " + context.raw + "%";
-            },
-          },
-        },
-      },
-    },
-  });
-}
-
 function renderLocalities(data) {
   const container = document.getElementById("localitiesContainer");
   container.innerHTML = "";
 
   const localityMap = {};
+  const localityTotals = {};
 
   data.forEach((row) => {
     const locality = row["Locality"] || "Unknown Locality";
+    const confidence = parseFloat(row["Confidence(%)"]) || 0;
+
     if (!localityMap[locality]) localityMap[locality] = [];
     localityMap[locality].push(row);
+
+    // Track total confidence for each locality
+    if (!localityTotals[locality]) localityTotals[locality] = 0;
+    localityTotals[locality] += confidence;
   });
+
+  // Find locality with max waste
+  let highestLocality = null;
+  let highestValue = -1;
+  for (let loc in localityTotals) {
+    if (localityTotals[loc] > highestValue) {
+      highestValue = localityTotals[loc];
+      highestLocality = loc;
+    }
+  }
+  document.getElementById("highestWasteNote").innerText =
+    `📍 Highest Waste Collected: ${highestLocality}`;
 
   Object.keys(localityMap).forEach((locality, index) => {
     const rows = localityMap[locality];
@@ -84,7 +48,6 @@ function renderLocalities(data) {
 
     const labels = [];
     const values = [];
-
     for (let type in wasteMap) {
       const avg =
         wasteMap[type].reduce((a, b) => a + b, 0) / wasteMap[type].length;
@@ -92,10 +55,8 @@ function renderLocalities(data) {
       values.push(avg.toFixed(2));
     }
 
-    // Calculate overall average
     const overallAvg = (totalConf / totalCount).toFixed(2);
 
-    // Horizontal card
     const card = document.createElement("div");
     card.className = "locality-section";
     card.innerHTML = `
@@ -110,19 +71,16 @@ function renderLocalities(data) {
             <tr><th>Waste Type</th><th>Avg Confidence (%)</th></tr>
           </thead>
           <tbody>
-            ${labels
-              .map(
-                (type, i) =>
-                  `<tr><td>${type}</td><td>${values[i]}</td></tr>`
-              )
-              .join("")}
+            ${labels.map(
+              (type, i) =>
+                `<tr><td>${type}</td><td>${values[i]}</td></tr>`
+            ).join("")}
           </tbody>
         </table>
       </div>
     `;
 
     container.appendChild(card);
-
     renderChart(`chartCanvas_${index}`, labels, values);
   });
 }
