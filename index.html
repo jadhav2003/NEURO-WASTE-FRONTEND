@@ -1,41 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NeuroWaste Dashboard</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css">
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- PapaParse for CSV -->
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+  <!-- PapaParse -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <!-- Header -->
   <header>
-    <h1>♻️ NeuroWaste Analytics</h1>
-    <button id="themeToggle">🌙</button>
+    <h1>♻️ NeuroWaste Dashboard</h1>
   </header>
 
-  <!-- Main Content -->
   <main>
-    <!-- Upload Section -->
-    <section class="upload-section">
-      <label for="csvFile" class="upload-label">📂 Upload CSV</label>
-      <input type="file" id="csvFile" accept=".csv" />
-    </section>
+    <!-- File Upload -->
+    <div class="upload-box">
+      <label for="csvFile" class="upload-label">📂 Upload CSV File</label>
+      <input type="file" id="csvFile" accept=".csv" hidden>
+    </div>
 
-    <!-- Insights -->
-    <section id="insights" class="card insights">
-      <h2>📊 Insights</h2>
-      <ul id="insightsList"></ul>
-    </section>
-
-    <!-- Charts & Tables -->
-    <section id="localitiesContainer"></section>
+    <!-- Localities + Charts -->
+    <div id="localitiesContainer"></div>
   </main>
 
   <script src="script.js"></script>
 </body>
 </html>
-s
