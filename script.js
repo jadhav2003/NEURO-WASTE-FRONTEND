@@ -1,5 +1,6 @@
 let chartInstances = {};
 
+// File Upload Handling
 document.getElementById("csvFile").addEventListener("change", function (event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -17,6 +18,7 @@ function renderChart(canvasId, labels, values) {
   if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
 
   const ctx = document.getElementById(canvasId).getContext("2d");
+
   chartInstances[canvasId] = new Chart(ctx, {
     type: "pie",
     data: {
@@ -26,15 +28,12 @@ function renderChart(canvasId, labels, values) {
           label: "Average Confidence (%)",
           data: values,
           backgroundColor: [
-            "#4CAF50",
-            "#FF9800",
-            "#2196F3",
-            "#9C27B0",
-            "#FF5722",
-            "#607D8B",
-            "#FFC107",
-            "#00BCD4",
+            "#4CAF50", "#FF9800", "#2196F3",
+            "#9C27B0", "#FF5722", "#607D8B",
+            "#FFC107", "#00BCD4",
           ],
+          borderColor: "#fff",
+          borderWidth: 1
         },
       ],
     },
@@ -59,6 +58,7 @@ function renderLocalities(data) {
   container.innerHTML = "";
 
   const localityMap = {};
+
   data.forEach((row) => {
     const locality = row["Locality"] || "Unknown Locality";
     if (!localityMap[locality]) localityMap[locality] = [];
@@ -67,17 +67,24 @@ function renderLocalities(data) {
 
   Object.keys(localityMap).forEach((locality, index) => {
     const rows = localityMap[locality];
-
     const wasteMap = {};
+    let totalConf = 0;
+    let totalCount = 0;
+
     rows.forEach((row) => {
       const type = row["Waste_Type"] || "Unknown";
       const confidence = parseFloat(row["Confidence(%)"]) || 0;
+
       if (!wasteMap[type]) wasteMap[type] = [];
       wasteMap[type].push(confidence);
+
+      totalConf += confidence;
+      totalCount++;
     });
 
     const labels = [];
     const values = [];
+
     for (let type in wasteMap) {
       const avg =
         wasteMap[type].reduce((a, b) => a + b, 0) / wasteMap[type].length;
@@ -85,16 +92,19 @@ function renderLocalities(data) {
       values.push(avg.toFixed(2));
     }
 
-    // Horizontal card: locality + chart + table in single row
+    // Calculate overall average
+    const overallAvg = (totalConf / totalCount).toFixed(2);
+
+    // Horizontal card
     const card = document.createElement("div");
     card.className = "locality-section";
-
     card.innerHTML = `
       <div class="locality-header">📍 ${locality}</div>
       <div class="card" style="flex:0 0 250px;">
+        <p><strong>Total Avg Confidence:</strong> ${overallAvg}%</p>
         <canvas id="chartCanvas_${index}"></canvas>
       </div>
-      <div class="card">
+      <div class="card" style="flex:0 0 auto;">
         <table>
           <thead>
             <tr><th>Waste Type</th><th>Avg Confidence (%)</th></tr>
@@ -102,7 +112,8 @@ function renderLocalities(data) {
           <tbody>
             ${labels
               .map(
-                (type, i) => `<tr><td>${type}</td><td>${values[i]}</td></tr>`
+                (type, i) =>
+                  `<tr><td>${type}</td><td>${values[i]}</td></tr>`
               )
               .join("")}
           </tbody>
@@ -111,6 +122,7 @@ function renderLocalities(data) {
     `;
 
     container.appendChild(card);
+
     renderChart(`chartCanvas_${index}`, labels, values);
   });
 }
