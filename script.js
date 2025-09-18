@@ -1,5 +1,3 @@
-// script.js
-
 let chartInstances = {};
 
 document.getElementById("csvFile").addEventListener("change", function (event) {
@@ -87,15 +85,12 @@ function renderLocalities(data) {
       values.push(avg.toFixed(2));
     }
 
-    // Horizontal card: locality + chart + table in single row
     const card = document.createElement("div");
     card.className = "locality-section";
     card.style.display = "flex";
     card.style.alignItems = "flex-start";
     card.style.gap = "30px";
-    card.style.marginBottom = "25px";
 
-    // ✅ FIXED: use backticks for template literal
     card.innerHTML = `
       <div class="locality-header" style="min-width:150px;">📍 ${locality}</div>
       <div class="card" style="flex:0 0 250px;">
