@@ -3,158 +3,129 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-  display: flex;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #2c5364, #0f2027);
   color: #fff;
+  transition: background 0.3s, color 0.3s;
 }
 
-/* Sidebar */
-.sidebar {
-  width: 220px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
+/* Light Theme */
+body.light {
+  background: #f4f4f4;
+  color: #222;
 }
 
-.sidebar h2 {
-  font-size: 1.4rem;
-  text-align: center;
-}
-
-.sidebar nav {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.sidebar nav a {
-  color: #eee;
-  text-decoration: none;
-  font-size: 1rem;
-  padding: 10px;
-  border-radius: 8px;
-  transition: 0.3s;
-}
-
-.sidebar nav a:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-/* Main */
-.main-content {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-}
-
+/* Header */
 header {
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.2);
 }
 
 header h1 {
-  font-size: 1.8rem;
-  font-weight: bold;
+  font-size: 1.6rem;
 }
 
-/* File Upload */
+#themeToggle {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* Upload Section */
 .upload-section {
   text-align: center;
-  margin: 20px 0;
+  margin: 30px 0;
 }
 
 .upload-label {
-  background: #00bcd4;
-  padding: 12px 24px;
+  display: inline-block;
+  padding: 12px 25px;
   border-radius: 25px;
-  cursor: pointer;
+  background: #00c6ff;
   color: #fff;
   font-weight: bold;
-  display: inline-block;
+  cursor: pointer;
   transition: 0.3s;
 }
 
 .upload-label:hover {
-  background: #0097a7;
+  background: #0072ff;
 }
 
 #csvFile {
   display: none;
 }
 
-/* Filter */
-.filter-section {
-  margin: 20px 0;
-  text-align: center;
+/* Cards */
+.card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 20px;
+  margin: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  transition: background 0.3s, color 0.3s;
 }
 
-.filter-section label {
-  margin-right: 10px;
-  font-size: 1rem;
+body.light .card {
+  background: #fff;
+  color: #222;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-.filter-section select {
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: none;
-  background: rgba(255,255,255,0.2);
-  color: #fff;
+/* Insights */
+.insights ul {
+  margin-top: 10px;
+  list-style: none;
 }
 
-/* Localities */
-.localities {
-  display: flex;
-  flex-direction: column;
-  gap: 25px;
+.insights li {
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(255,255,255,0.2);
 }
 
+/* Locality Section */
 .locality-section {
   display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin: 25px;
   align-items: flex-start;
-  gap: 20px;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(10px);
-  padding: 20px;
-  border-radius: 15px;
 }
 
 .locality-header {
-  font-size: 1.2rem;
-  font-weight: bold;
   min-width: 150px;
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
-.card {
-  background: rgba(255, 255, 255, 0.15);
-  padding: 15px;
-  border-radius: 12px;
-  flex: 1;
-}
-
-canvas {
-  max-width: 250px;
-  max-height: 250px;
+.locality-section canvas {
+  width: 250px !important;
+  height: 250px !important;
 }
 
 table {
-  width: 100%;
   border-collapse: collapse;
-  color: #fff;
+  width: 300px;
 }
 
 table th, table td {
-  border: 1px solid rgba(255,255,255,0.2);
-  padding: 8px 12px;
-  text-align: left;
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 8px;
+  text-align: center;
 }
 
-table th {
-  background: rgba(0,0,0,0.3);
+body.light table th, 
+body.light table td {
+  border: 1px solid #ccc;
 }
