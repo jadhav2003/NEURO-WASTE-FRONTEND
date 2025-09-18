@@ -1,3 +1,5 @@
+// script.js
+
 let chartInstances = {};
 
 document.getElementById("csvFile").addEventListener("change", function (event) {
@@ -9,12 +11,10 @@ document.getElementById("csvFile").addEventListener("change", function (event) {
     skipEmptyLines: true,
     complete: function (results) {
       renderLocalities(results.data);
-      generateInsights(results.data);
     },
   });
 });
 
-// Chart render function
 function renderChart(canvasId, labels, values) {
   if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
 
@@ -25,12 +25,17 @@ function renderChart(canvasId, labels, values) {
       labels: labels,
       datasets: [
         {
-          label: "Avg Confidence (%)",
+          label: "Average Confidence (%)",
           data: values,
           backgroundColor: [
-            "#4CAF50", "#FF9800", "#2196F3",
-            "#9C27B0", "#FF5722", "#607D8B",
-            "#FFC107", "#00BCD4",
+            "#4CAF50",
+            "#FF9800",
+            "#2196F3",
+            "#9C27B0",
+            "#FF5722",
+            "#607D8B",
+            "#FFC107",
+            "#00BCD4",
           ],
         },
       ],
@@ -51,7 +56,6 @@ function renderChart(canvasId, labels, values) {
   });
 }
 
-// Render each locality with chart + table
 function renderLocalities(data) {
   const container = document.getElementById("localitiesContainer");
   container.innerHTML = "";
@@ -65,8 +69,8 @@ function renderLocalities(data) {
 
   Object.keys(localityMap).forEach((locality, index) => {
     const rows = localityMap[locality];
-    const wasteMap = {};
 
+    const wasteMap = {};
     rows.forEach((row) => {
       const type = row["Waste_Type"] || "Unknown";
       const confidence = parseFloat(row["Confidence(%)"]) || 0;
@@ -83,12 +87,21 @@ function renderLocalities(data) {
       values.push(avg.toFixed(2));
     }
 
+    // Horizontal card: locality + chart + table in single row
     const card = document.createElement("div");
     card.className = "locality-section";
+    card.style.display = "flex";
+    card.style.alignItems = "flex-start";
+    card.style.gap = "30px";
+    card.style.marginBottom = "25px";
+
+    // ✅ FIXED: use backticks for template literal
     card.innerHTML = `
-      <div class="locality-header">📍 ${locality}</div>
-      <div class="card"><canvas id="chartCanvas_${index}"></canvas></div>
-      <div class="card">
+      <div class="locality-header" style="min-width:150px;">📍 ${locality}</div>
+      <div class="card" style="flex:0 0 250px;">
+        <canvas id="chartCanvas_${index}"></canvas>
+      </div>
+      <div class="card" style="flex:0 0 auto;">
         <table>
           <thead>
             <tr><th>Waste Type</th><th>Avg Confidence (%)</th></tr>
@@ -96,43 +109,15 @@ function renderLocalities(data) {
           <tbody>
             ${labels
               .map(
-                (type, i) =>
-                  `<tr><td>${type}</td><td>${values[i]}</td></tr>`
+                (type, i) => `<tr><td>${type}</td><td>${values[i]}</td></tr>`
               )
               .join("")}
           </tbody>
         </table>
       </div>
     `;
+
     container.appendChild(card);
     renderChart(`chartCanvas_${index}`, labels, values);
   });
 }
-
-// Generate insights from CSV
-function generateInsights(data) {
-  const list = document.getElementById("insightsList");
-  list.innerHTML = "";
-
-  let total = data.length;
-  let avgConfidence =
-    data.reduce((sum, row) => sum + (parseFloat(row["Confidence(%)"]) || 0), 0) /
-    total;
-
-  let highConf = data.filter(
-    (row) => parseFloat(row["Confidence(%)"]) > 80
-  ).length;
-
-  list.innerHTML = `
-    <li>📌 Total records: <b>${total}</b></li>
-    <li>📌 Average Confidence: <b>${avgConfidence.toFixed(2)}%</b></li>
-    <li>📌 High Confidence (>80%): <b>${highConf}</b> entries</li>
-  `;
-}
-
-// Theme Toggle
-document.getElementById("themeToggle").addEventListener("click", () => {
-  document.body.classList.toggle("light");
-  document.getElementById("themeToggle").textContent =
-    document.body.classList.contains("light") ? "☀️" : "🌙";
-});
