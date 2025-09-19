@@ -1,17 +1,24 @@
 let chartInstances = {};
-let dailyLineChart;
+let parsedData = [];
+let map;
 
-// CSV File upload handler
+// Section toggle
+function showSection(id) {
+  document.querySelectorAll(".section").forEach(sec => sec.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  if (id === "mapView") renderMap();
+}
+
+// CSV handling
 document.getElementById("csvFile").addEventListener("change", function (event) {
   const file = event.target.files[0];
   if (!file) return;
-
   Papa.parse(file, {
     header: true,
     skipEmptyLines: true,
     complete: function (results) {
-      renderLocalities(results.data);
-      renderDailyLineChart(results.data);
+      parsedData = results.data.filter(r => r["Locality"] && r["Locality"].trim() !== "");
+      renderLocalities(parsedData);
     },
   });
 });
@@ -19,10 +26,7 @@ document.getElementById("csvFile").addEventListener("change", function (event) {
 // Pie chart rendering
 function renderChart(canvasId, labels, values, highlightIndex = -1) {
   if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
-
-  const borderColors = labels.map((_, i) =>
-    i === highlightIndex ? "red" : "white"
-  );
+  const borderColors = labels.map((_, i) => i === highlightIndex ? "red" : "white");
   const borderWidths = labels.map((_, i) => (i === highlightIndex ? 4 : 1));
 
   const ctx = document.getElementById(canvasId).getContext("2d");
@@ -30,32 +34,15 @@ function renderChart(canvasId, labels, values, highlightIndex = -1) {
     type: "pie",
     data: {
       labels: labels,
-      datasets: [
-        {
-          label: "Average Confidence (%)",
-          data: values,
-          backgroundColor: [
-            "#4CAF50", "#FF9800", "#2196F3", "#9C27B0",
-            "#FF5722", "#607D8B", "#FFC107", "#00BCD4",
-          ],
-          borderColor: borderColors,
-          borderWidth: borderWidths,
-        },
-      ],
+      datasets: [{
+        label: "Avg Confidence (%)",
+        data: values,
+        backgroundColor: ["#4CAF50","#FF9800","#2196F3","#9C27B0","#FF5722","#607D8B","#FFC107","#00BCD4"],
+        borderColor: borderColors,
+        borderWidth: borderWidths
+      }]
     },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: "right" },
-        tooltip: {
-          callbacks: {
-            label: function (context) {
-              return context.label + ": " + context.raw + "%";
-            },
-          },
-        },
-      },
-    },
+    options: { responsive: true, plugins: { legend: { position: "right" } } }
   });
 }
 
@@ -63,131 +50,101 @@ function renderChart(canvasId, labels, values, highlightIndex = -1) {
 function renderLocalities(data) {
   const container = document.getElementById("localitiesContainer");
   container.innerHTML = "";
-
   const notificationsList = document.getElementById("notificationsList");
   notificationsList.innerHTML = "";
 
-  const localityMap = {};
-  data.forEach((row) => {
-    const locality = row["Locality"] || "Unknown Locality";
-    if (!localityMap[locality]) localityMap[locality] = [];
-    localityMap[locality].push(row);
-  });
+  let highestLocality = null, highestAvg = 0, totalAvgSum = 0, totalCount = 0, alertCount = 0, criticalCount = 0;
 
-  let highestLocality = null;
-  let highestAvg = 0;
+  const localityMap = {};
+  data.forEach(row => {
+    const loc = row["Locality"];
+    if (!localityMap[loc]) localityMap[loc] = [];
+    localityMap[loc].push(row);
+  });
 
   Object.keys(localityMap).forEach((locality, index) => {
     const rows = localityMap[locality];
     const wasteMap = {};
-    rows.forEach((row) => {
+    rows.forEach(row => {
       const type = row["Waste_Type"] || "Unknown";
       const confidence = parseFloat(row["Confidence(%)"]) || 0;
       if (!wasteMap[type]) wasteMap[type] = [];
       wasteMap[type].push(confidence);
     });
 
-    const labels = [];
-    const values = [];
+    const labels = [], values = [];
     for (let type in wasteMap) {
-      const avg = wasteMap[type].reduce((a, b) => a + b, 0) / wasteMap[type].length;
+      const avg = wasteMap[type].reduce((a,b)=>a+b,0)/wasteMap[type].length;
       labels.push(type);
       values.push(avg.toFixed(2));
     }
 
-    // Total avg confidence
-    const totalAvg =
-      values.reduce((a, b) => parseFloat(a) + parseFloat(b), 0) / values.length;
+    const totalAvg = values.reduce((a,b)=>parseFloat(a)+parseFloat(b),0)/values.length;
+    totalAvgSum += totalAvg; totalCount++;
 
-    // Track highest
-    if (totalAvg > highestAvg) {
-      highestAvg = totalAvg;
-      highestLocality = locality;
-    }
+    if (totalAvg > highestAvg) { highestAvg = totalAvg; highestLocality = locality; }
 
-    // Notification if >85%
     if (totalAvg > 85) {
+      alertCount++;
       const li = document.createElement("li");
       li.innerHTML = `⚠️ ${locality} bin is ${totalAvg.toFixed(2)}% full - Please dump!`;
       notificationsList.appendChild(li);
     }
+    if (totalAvg > 90) criticalCount++;
 
-    // Most consumed waste type index
-    const maxIndex = values.indexOf(
-      Math.max(...values.map((v) => parseFloat(v))).toFixed(2)
-    );
+    const maxIndex = values.indexOf(Math.max(...values.map(v=>parseFloat(v))).toFixed(2));
+    let colorClass = "locality-green";
+    if (totalAvg > 85) colorClass = "locality-red"; else if (totalAvg > 50) colorClass = "locality-yellow";
 
-    // Horizontal card
     const card = document.createElement("div");
-    card.className = "locality-section";
+    card.className = `locality-section ${colorClass}`;
     card.innerHTML = `
       <div class="locality-header">📍 ${locality}</div>
-      <div class="card" style="flex:0 0 250px;">
-        <canvas id="chartCanvas_${index}"></canvas>
-      </div>
-      <div class="card" style="flex:0 0 auto;">
+      <div class="card" style="flex:0 0 250px;"><canvas id="chartCanvas_${index}"></canvas></div>
+      <div class="card">
         <table>
-          <thead>
-            <tr><th>Waste Type</th><th>Avg Confidence (%)</th></tr>
-          </thead>
-          <tbody>
-            ${labels
-              .map((type, i) => `<tr><td>${type}</td><td>${values[i]}</td></tr>`)
-              .join("")}
-          </tbody>
+          <thead><tr><th>Waste Type</th><th>Avg Confidence (%)</th></tr></thead>
+          <tbody>${labels.map((t,i)=>`<tr><td>${t}</td><td>${values[i]}</td></tr>`).join("")}</tbody>
         </table>
         <p><strong>Total Avg Confidence:</strong> ${totalAvg.toFixed(2)}%</p>
-      </div>
-    `;
+      </div>`;
     container.appendChild(card);
     renderChart(`chartCanvas_${index}`, labels, values, maxIndex);
   });
 
-  // Floating message for most filled bin
-  const highestWasteMessage = document.getElementById("highestWasteMessage");
-  highestWasteMessage.textContent = `🔥 Highest Filled Bin: ${highestLocality} (${highestAvg.toFixed(2)}%)`;
+  document.getElementById("highestWasteMessage").textContent = `🔥 Highest Filled Bin: ${highestLocality} (${highestAvg.toFixed(2)}%)`;
+  document.getElementById("avgConfidenceCard").textContent = `📊 Avg Confidence: ${(totalAvgSum/totalCount).toFixed(2)}%`;
+  document.getElementById("mostFilledCard").textContent = `🔥 Most Filled Bin: ${highestLocality} (${highestAvg.toFixed(2)}%)`;
+  document.getElementById("alertCountCard").textContent = `🚨 Alerts: ${alertCount}`;
+  document.getElementById("criticalAlertsCard").textContent = `🛑 Critical Alerts: ${criticalCount}`;
 }
 
-// Daily Line Chart
-function renderDailyLineChart(data) {
-  const dateMap = {};
-  data.forEach((row) => {
-    const date = row["Timestamp"] ? row["Timestamp"].split(" ")[0] : "Unknown";
-    const confidence = parseFloat(row["Confidence(%)"]) || 0;
-    if (!dateMap[date]) dateMap[date] = [];
-    dateMap[date].push(confidence);
-  });
+// Map rendering
+function renderMap() {
+  if (!parsedData.length) return;
+  if (!map) {
+    map = L.map("map").setView([15.8497, 74.4977], 13); // Belgaum default
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+  }
+  parsedData.forEach(row => {
+    const lat = parseFloat(row["Lat"]);
+    const lng = parseFloat(row["Lng"]);
+    const conf = parseFloat(row["Confidence(%)"]);
+    if (!lat || !lng) return;
 
-  const labels = Object.keys(dateMap);
-  const values = labels.map((date) => {
-    const avg =
-      dateMap[date].reduce((a, b) => a + b, 0) / dateMap[date].length;
-    return avg.toFixed(2);
+    let color = "green"; if (conf > 85) color = "red"; else if (conf > 50) color = "orange";
+    const marker = L.circleMarker([lat, lng], { radius: 10, color }).addTo(map);
+    marker.bindPopup(`📍 ${row["Locality"]}<br>Waste: ${row["Waste_Type"]}<br>Confidence: ${conf}%`);
   });
+}
 
-  if (dailyLineChart) dailyLineChart.destroy();
-
-  const ctx = document.getElementById("dailyLineChart").getContext("2d");
-  dailyLineChart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: "Daily Avg Waste Confidence (%)",
-          data: values,
-          borderColor: "#0077cc",
-          backgroundColor: "rgba(0, 119, 204, 0.2)",
-          fill: true,
-          tension: 0.3,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { position: "top" },
-      },
-    },
-  });
+// CSV Download
+function downloadCSV() {
+  if (!parsedData.length) { alert("No data to download!"); return; }
+  const csv = Papa.unparse(parsedData);
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "NeuroWaste_Report.csv";
+  link.click();
 }
