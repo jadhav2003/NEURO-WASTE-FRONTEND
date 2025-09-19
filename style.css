@@ -1,7 +1,7 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #f4f8fb;
+  background: linear-gradient(to right, #f0f4f7, #e8f0fa);
   color: #333;
 }
 
@@ -10,11 +10,20 @@ header {
   color: white;
   padding: 15px;
   text-align: center;
+  position: relative;
 }
 
 h1 {
   margin: 0;
   font-size: 28px;
+}
+
+#clock {
+  position: absolute;
+  right: 20px;
+  top: 18px;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .file-upload {
@@ -32,6 +41,11 @@ h1 {
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.locality-section:hover {
+  transform: scale(1.02);
+  box-shadow: 0px 6px 16px rgba(0,0,0,0.2);
 }
 
 .locality-header {
@@ -63,7 +77,6 @@ table th {
   color: white;
 }
 
-/* Notifications */
 #notification-section {
   max-width: 800px;
   margin: 30px auto;
@@ -83,6 +96,17 @@ table th {
 #notificationTable th {
   background: #ff9800;
   color: white;
+}
+
+.alert-row {
+  background: #f8d7da !important;
+  color: #721c24;
+  font-weight: bold;
+}
+
+.ok-row {
+  background: #d4edda !important;
+  color: #155724;
 }
 
 #floatingNote {
