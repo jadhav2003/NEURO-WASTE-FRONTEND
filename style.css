@@ -63,11 +63,46 @@ table th {
   color: white;
 }
 
+/* Notifications */
+#notification-section {
+  max-width: 800px;
+  margin: 30px auto;
+  background: #fff3cd;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #ffeeba;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+}
+
+#notification-section h2 {
+  margin-top: 0;
+  color: #856404;
+  text-align: center;
+}
+
+#notificationTable th {
+  background: #ff9800;
+  color: white;
+}
+
 #floatingNote {
   position: fixed;
   bottom: 20px;
   right: 20px;
   background: #ff9800;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+  animation: floatNote 3s infinite alternate;
+}
+
+#highestWasteNote {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: #1976d2;
   color: white;
   padding: 12px 18px;
   border-radius: 8px;
