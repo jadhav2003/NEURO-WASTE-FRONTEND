@@ -16,17 +16,30 @@
 
   <!-- File Upload -->
   <div class="file-upload">
-    <label for="csvFile">📂 Upload Area File:</label>
+    <label for="csvFile">📂 Upload CSV File:</label>
     <input type="file" id="csvFile" accept=".csv" />
   </div>
 
   <!-- Container -->
   <div id="localitiesContainer"></div>
 
-  <!-- Floating note -->
-  <div id="floatingNote">♻️ Please throw waste in Neuro Bins!</div>
+  <!-- Notifications -->
+  <div id="notification-section">
+    <h2>⚠️ Bin Status Notifications</h2>
+    <table id="notificationTable">
+      <thead>
+        <tr><th>Locality</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <!-- Alerts will appear here -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Floating notes -->
+  <div id="floatingNote">♻️ Please drop waste in Neuro Bins!</div>
+  <div id="highestWasteNote">📍 Highest Waste Collected: -</div>
 
   <script src="script.js"></script>
-  
 </body>
 </html>
