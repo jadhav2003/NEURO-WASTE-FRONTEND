@@ -1,6 +1,7 @@
 let chartInstances = {};
+let dailyLineChart;
 
-// CSV Upload
+// CSV File upload handler
 document.getElementById("csvFile").addEventListener("change", function (event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -10,16 +11,21 @@ document.getElementById("csvFile").addEventListener("change", function (event) {
     skipEmptyLines: true,
     complete: function (results) {
       renderLocalities(results.data);
+      renderDailyLineChart(results.data);
     },
   });
 });
 
-// Chart Renderer
-function renderChart(canvasId, labels, values) {
+// Pie chart rendering
+function renderChart(canvasId, labels, values, highlightIndex = -1) {
   if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
 
-  const ctx = document.getElementById(canvasId).getContext("2d");
+  const borderColors = labels.map((_, i) =>
+    i === highlightIndex ? "red" : "white"
+  );
+  const borderWidths = labels.map((_, i) => (i === highlightIndex ? 4 : 1));
 
+  const ctx = document.getElementById(canvasId).getContext("2d");
   chartInstances[canvasId] = new Chart(ctx, {
     type: "pie",
     data: {
@@ -29,12 +35,11 @@ function renderChart(canvasId, labels, values) {
           label: "Average Confidence (%)",
           data: values,
           backgroundColor: [
-            "#4CAF50", "#FF9800", "#2196F3",
-            "#9C27B0", "#FF5722", "#607D8B",
-            "#FFC107", "#00BCD4",
+            "#4CAF50", "#FF9800", "#2196F3", "#9C27B0",
+            "#FF5722", "#607D8B", "#FFC107", "#00BCD4",
           ],
-          borderColor: "#fff",
-          borderWidth: 1
+          borderColor: borderColors,
+          borderWidth: borderWidths,
         },
       ],
     },
@@ -54,78 +59,63 @@ function renderChart(canvasId, labels, values) {
   });
 }
 
-// Render Localities + Notifications
+// Locality rendering
 function renderLocalities(data) {
   const container = document.getElementById("localitiesContainer");
   container.innerHTML = "";
 
-  const notificationTable = document.querySelector("#notificationTable tbody");
-  notificationTable.innerHTML = "";
+  const notificationsList = document.getElementById("notificationsList");
+  notificationsList.innerHTML = "";
 
   const localityMap = {};
-  const localityTotals = {};
-
   data.forEach((row) => {
     const locality = row["Locality"] || "Unknown Locality";
-    const confidence = parseFloat(row["Confidence(%)"]) || 0;
-
     if (!localityMap[locality]) localityMap[locality] = [];
     localityMap[locality].push(row);
-
-    if (!localityTotals[locality]) localityTotals[locality] = 0;
-    localityTotals[locality] += confidence;
   });
 
-  // Find locality with max waste
   let highestLocality = null;
-  let highestValue = -1;
-  for (let loc in localityTotals) {
-    if (localityTotals[loc] > highestValue) {
-      highestValue = localityTotals[loc];
-      highestLocality = loc;
-    }
-  }
-  document.getElementById("highestWasteNote").innerText =
-    `🚮 Highest Waste Collected: ${highestLocality}`;
+  let highestAvg = 0;
 
   Object.keys(localityMap).forEach((locality, index) => {
     const rows = localityMap[locality];
     const wasteMap = {};
-    let totalConf = 0;
-    let totalCount = 0;
-
     rows.forEach((row) => {
       const type = row["Waste_Type"] || "Unknown";
       const confidence = parseFloat(row["Confidence(%)"]) || 0;
-
       if (!wasteMap[type]) wasteMap[type] = [];
       wasteMap[type].push(confidence);
-
-      totalConf += confidence;
-      totalCount++;
     });
 
     const labels = [];
     const values = [];
     for (let type in wasteMap) {
-      const avg =
-        wasteMap[type].reduce((a, b) => a + b, 0) / wasteMap[type].length;
+      const avg = wasteMap[type].reduce((a, b) => a + b, 0) / wasteMap[type].length;
       labels.push(type);
       values.push(avg.toFixed(2));
     }
 
-    const overallAvg = (totalConf / totalCount).toFixed(2);
+    // Total avg confidence
+    const totalAvg =
+      values.reduce((a, b) => parseFloat(a) + parseFloat(b), 0) / values.length;
 
-    // ✅ Alert if > 85
-    const row = document.createElement("tr");
-    if (overallAvg > 85) {
-      row.className = "alert-row";
-      row.innerHTML = `<td>${locality}</td><td>⚠️ Bin Full – Please Dump</td>`;
-    } else {
-      row.className = "ok-row";
-      row.innerHTML = `<td>${locality}</td><td>✅ Normal</td>`;
+    // Track highest
+    if (totalAvg > highestAvg) {
+      highestAvg = totalAvg;
+      highestLocality = locality;
     }
-    notificationTable.appendChild(row);
+
+    // Notification if >85%
+    if (totalAvg > 85) {
+      const li = document.createElement("li");
+      li.innerHTML = `⚠️ ${locality} bin is ${totalAvg.toFixed(2)}% full - Please dump!`;
+      notificationsList.appendChild(li);
+    }
+
+    // Most consumed waste type index
+    const maxIndex = values.indexOf(
+      Math.max(...values.map((v) => parseFloat(v))).toFixed(2)
+    );
 
     // Horizontal card
     const card = document.createElement("div");
@@ -133,7 +123,6 @@ function renderLocalities(data) {
     card.innerHTML = `
       <div class="locality-header">📍 ${locality}</div>
       <div class="card" style="flex:0 0 250px;">
-        <p><strong>Total Avg Confidence:</strong> ${overallAvg}%</p>
         <canvas id="chartCanvas_${index}"></canvas>
       </div>
       <div class="card" style="flex:0 0 auto;">
@@ -142,25 +131,63 @@ function renderLocalities(data) {
             <tr><th>Waste Type</th><th>Avg Confidence (%)</th></tr>
           </thead>
           <tbody>
-            ${labels.map(
-              (type, i) =>
-                `<tr><td>${type}</td><td>${values[i]}</td></tr>`
-            ).join("")}
+            ${labels
+              .map((type, i) => `<tr><td>${type}</td><td>${values[i]}</td></tr>`)
+              .join("")}
           </tbody>
         </table>
+        <p><strong>Total Avg Confidence:</strong> ${totalAvg.toFixed(2)}%</p>
       </div>
     `;
-
     container.appendChild(card);
-    renderChart(`chartCanvas_${index}`, labels, values);
+    renderChart(`chartCanvas_${index}`, labels, values, maxIndex);
+  });
+
+  // Floating message for most filled bin
+  const highestWasteMessage = document.getElementById("highestWasteMessage");
+  highestWasteMessage.textContent = `🔥 Highest Filled Bin: ${highestLocality} (${highestAvg.toFixed(2)}%)`;
+}
+
+// Daily Line Chart
+function renderDailyLineChart(data) {
+  const dateMap = {};
+  data.forEach((row) => {
+    const date = row["Timestamp"] ? row["Timestamp"].split(" ")[0] : "Unknown";
+    const confidence = parseFloat(row["Confidence(%)"]) || 0;
+    if (!dateMap[date]) dateMap[date] = [];
+    dateMap[date].push(confidence);
+  });
+
+  const labels = Object.keys(dateMap);
+  const values = labels.map((date) => {
+    const avg =
+      dateMap[date].reduce((a, b) => a + b, 0) / dateMap[date].length;
+    return avg.toFixed(2);
+  });
+
+  if (dailyLineChart) dailyLineChart.destroy();
+
+  const ctx = document.getElementById("dailyLineChart").getContext("2d");
+  dailyLineChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Daily Avg Waste Confidence (%)",
+          data: values,
+          borderColor: "#0077cc",
+          backgroundColor: "rgba(0, 119, 204, 0.2)",
+          fill: true,
+          tension: 0.3,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: "top" },
+      },
+    },
   });
 }
-
-// 🕒 Live Clock
-function updateClock() {
-  const now = new Date();
-  document.getElementById("clock").textContent =
-    now.toLocaleDateString() + " " + now.toLocaleTimeString();
-}
-setInterval(updateClock, 1000);
-updateClock();
