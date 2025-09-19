@@ -1,45 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Neuro Waste </title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuroWaste Smart Bins</title>
+  <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
 <body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">♻️ NeuroWaste</div>
+    <ul>
+      <li><a href="#">Dashboard</a></li>
+      <li><a href="#">Collectors</a></li>
+      <li><a href="#">Leaderboard</a></li>
+      <li><a href="#">Reports</a></li>
+      <li><a href="#">Notifications</a></li>
+    </ul>
+  </nav>
+
   <!-- Heading -->
-  <header>
-    <h1>Neuro Waste Smart Bins</h1>
-    <div id="clock"></div>
+  <header class="main-header">
+    <h1>NeuroWaste Smart Bins</h1>
   </header>
 
-  <!-- File Upload -->
-  <div class="file-upload">
-    <label for="csvFile">📂 Upload Area File:</label>
-    <input type="file" id="csvFile" accept=".csv" />
+  <!-- File upload -->
+  <div class="upload-container">
+    <input type="file" id="csvFile" accept=".csv">
   </div>
 
-  <!-- Container -->
-  <div id="localitiesContainer"></div>
+  <!-- Floating Messages -->
+  <div id="floatingMessage">♻️ Please throw waste in Neuro Bins!</div>
+  <div id="highestWasteMessage"></div>
 
   <!-- Notifications -->
-  <div id="notification-section">
-    <h2>⚠️ Bin Status Notifications</h2>
-    <table id="notificationTable">
-      <thead>
-        <tr><th>Locality</th><th>Status</th></tr>
-      </thead>
-      <tbody>
-        <!-- Alerts will appear here -->
-      </tbody>
-    </table>
+  <div id="notificationsPanel">
+    <h3>🚨 Notifications</h3>
+    <ul id="notificationsList"></ul>
   </div>
 
-  <!-- Floating notes -->
-  <div id="floatingNote">♻️ Please drop waste in Neuro Smart Bins!</div>
-  <div id="highestWasteNote">🚮 Highest Waste Collected: -</div>
+  <!-- Daily Waste Line Chart -->
+  <section class="chart-section">
+    <h2>📊 Total Waste Collected (Daily)</h2>
+    <canvas id="dailyLineChart"></canvas>
+  </section>
+
+  <!-- Localities Data -->
+  <div id="localitiesContainer"></div>
 
   <script src="script.js"></script>
 </body>
