@@ -3,97 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NeuroWaste Smart Bins</title>
+  <title>Neuro Waste Eco Bins</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
   <!-- Navbar -->
   <nav class="navbar">
-    <div class="logo">♻️ NeuroWaste</div>
-    <ul>
-      <li><a href="#" onclick="showSection('dashboard')">Dashboard</a></li>
-      <li><a href="#" onclick="showSection('mapView')">Map View</a></li>
-      <li><a href="#" onclick="showSection('collectors')">Collectors</a></li>
-      <li><a href="#" onclick="showSection('leaderboard')">Leaderboard</a></li>
-      <li><a href="#" onclick="showSection('reports')">Reports</a></li>
-      <li><a href="#" onclick="showSection('notifications')">Notifications</a></li>
+   <div class="logo">♻️ Neuro Waste </div>
+    <ul class="nav-links">
+      <li><a href="#">Command Hub</a></li>
+      <li><a href="#">Service Zones</a></li>
+      <li><a href="#">Eco Crew</a></li>
+      <li><a href="#">Victory Board</a></li>
+      <li><a href="#">Trackr</a></li>
+      <li><a href="#">Eco Notes</a></li>
     </ul>
+    <button id="darkModeToggle">🌙</button>
   </nav>
 
-  <!-- Heading -->
-  <header class="main-header">
-    <h1>NeuroWaste Smart Bins</h1>
-  </header>
+  <!-- Floating Alerts -->
+  <div id="floatingMessage" class="floating-message"></div>
+  <div id="mostFilledBin" class="floating-message right"></div>
 
-  <!-- File upload -->
-  <div class="upload-container">
-    <input type="file" id="csvFile" accept=".csv">
-    <button onclick="downloadCSV()">⬇️ Download Report</button>
-  </div>
-
-  <!-- Floating Messages -->
-  <div id="floatingMessage">♻️ Please throw waste in Neuro Bins!</div>
-  <div id="highestWasteMessage"></div>
-
-  <!-- Sections -->
-  <section id="dashboard" class="section active">
-    <h2>📍 Locality Dashboard</h2>
-    <div id="localitiesContainer"></div>
-  </section>
-
-  <section id="mapView" class="section">
-    <h2>🗺️ Smart Bin Map</h2>
-    <div id="map"></div>
-  </section>
-
-  <section id="collectors" class="section">
-    <h2>👷 Waste Collectors</h2>
-    <table>
-      <thead>
-        <tr><th>Name</th><th>Assigned Locality</th><th>Bins Collected</th><th>Progress</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Ramesh</td><td>MG Road</td><td>12</td>
-          <td><progress value="70" max="100"></progress></td></tr>
-        <tr><td>Suresh</td><td>Tilakwadi</td><td>9</td>
-          <td><progress value="50" max="100"></progress></td></tr>
-        <tr><td>Ayesha</td><td>Shivaji Nagar</td><td>15</td>
-          <td><progress value="90" max="100"></progress></td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="leaderboard" class="section">
-    <h2>🏆 Collector Leaderboard</h2>
-    <table class="leaderboard">
-      <thead>
-        <tr><th>Rank</th><th>Name</th><th>Points</th><th>Badge</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>1</td><td>Ayesha</td><td>150 ⭐</td><td>🥇 Gold</td></tr>
-        <tr><td>2</td><td>Ramesh</td><td>120 ⭐</td><td>🥈 Silver</td></tr>
-        <tr><td>3</td><td>Suresh</td><td>110 ⭐</td><td>🥉 Bronze</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <section id="reports" class="section">
-    <h2>📑 Reports Summary</h2>
-    <div class="report-cards">
-      <div class="report-card" id="avgConfidenceCard">📊 Avg Confidence: 0%</div>
-      <div class="report-card" id="mostFilledCard">🔥 Most Filled Bin: None</div>
-      <div class="report-card" id="alertCountCard">🚨 Alerts: 0</div>
-      <div class="report-card critical" id="criticalAlertsCard">🛑 Critical Alerts: 0</div>
+  <!-- Dashboard Section -->
+  <section class="Command Hub">
+    <div class="chart-container">
+      <h2>Waste Distribution</h2>
+      <canvas id="wastePieChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <h2>Average Confidence by Location</h2>
+      <canvas id="avgBarChart"></canvas>
+    </div>
+    <div class="notifications">
+      <h2>Eco Notes</h2>
+      <ul id="notificationList"></ul>
     </div>
   </section>
 
-  <section id="notifications" class="section">
-    <h2>🚨 Notifications</h2>
-    <ul id="notificationsList"></ul>
+  <!-- Collector Leaderboard -->
+  <section class="Victory Board">
+    <h2>Eco Crew Victory Board</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Eco Crew</th>
+          <th>Points</th>
+          <th>Profile</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboardTable"></tbody>
+    </table>
+  </section>
+
+  <!-- Collector Profile Modal -->
+  <div id="collectorModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="collectorName"></h2>
+      <p id="collectorDetails"></p>
+    </div>
+  </div>
+
+  <!-- Reports & Feedback -->
+  <section class="reports">
+    <button id="downloadReport">📥 Download Report</button>
+    <h2>Feedback</h2>
+    <textarea placeholder="Share your feedback..."></textarea>
+    <button>Submit</button>
   </section>
 
   <script src="script.js"></script>
