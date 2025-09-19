@@ -1,141 +1,135 @@
 body {
-  margin: 0;
   font-family: Arial, sans-serif;
-  background: linear-gradient(to right, #f0f4f7, #e8f0fa);
-  color: #333;
-}
-
-header {
-  background: #1976d2;
-  color: white;
-  padding: 15px;
-  text-align: center;
-  position: relative;
-}
-
-h1 {
   margin: 0;
-  font-size: 28px;
+  background: #f4f7fa;
 }
 
-#clock {
-  position: absolute;
-  right: 20px;
-  top: 18px;
-  font-size: 16px;
+/* Navbar */
+.navbar {
+  background: #0077cc;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.navbar .logo {
+  font-size: 20px;
   font-weight: bold;
 }
+.navbar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+.navbar ul li {
+  margin-left: 20px;
+}
+.navbar ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+.navbar ul li a:hover {
+  text-decoration: underline;
+}
 
-.file-upload {
+/* Heading */
+.main-header {
+  background: #0077cc;
+  color: white;
   text-align: center;
+  padding: 20px;
+}
+
+/* File upload */
+.upload-container {
+  display: flex;
+  justify-content: center;
   margin: 20px 0;
 }
 
+/* Floating messages */
+#floatingMessage, #highestWasteMessage {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  background: #0077cc;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  animation: float 3s infinite alternate;
+}
+#highestWasteMessage {
+  left: auto;
+  right: 10px;
+  background: #ff5722;
+}
+@keyframes float {
+  from { transform: translateY(0); }
+  to { transform: translateY(-10px); }
+}
+
+/* Notifications Panel */
+#notificationsPanel {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  background: #fff;
+  border: 2px solid #0077cc;
+  padding: 15px;
+  width: 250px;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+}
+#notificationsPanel h3 {
+  margin: 0 0 10px;
+  color: #0077cc;
+}
+#notificationsPanel ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+#notificationsPanel ul li {
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+/* Locality Cards */
 .locality-section {
   display: flex;
   align-items: flex-start;
   gap: 30px;
-  margin: 25px auto;
-  max-width: 1000px;
-  background: white;
+  margin: 25px;
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
 }
-.locality-section:hover {
-  transform: scale(1.02);
-  box-shadow: 0px 6px 16px rgba(0,0,0,0.2);
-}
-
 .locality-header {
   font-weight: bold;
   font-size: 18px;
-  margin-bottom: 10px;
+  min-width: 150px;
 }
-
 .card {
   background: #fafafa;
   padding: 15px;
-  border-radius: 10px;
-  flex: 1;
+  border-radius: 8px;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
 }
-
 table {
   border-collapse: collapse;
   width: 100%;
 }
-
-table th, table td {
-  border: 1px solid #ddd;
-  padding: 8px;
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
   text-align: center;
 }
-
-table th {
-  background: #1976d2;
+th {
+  background: #0077cc;
   color: white;
-}
-
-#notification-section {
-  max-width: 800px;
-  margin: 30px auto;
-  background: #fff3cd;
-  padding: 15px;
-  border-radius: 10px;
-  border: 1px solid #ffeeba;
-  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
-}
-
-#notification-section h2 {
-  margin-top: 0;
-  color: #856404;
-  text-align: center;
-}
-
-#notificationTable th {
-  background: #ff9800;
-  color: white;
-}
-
-.alert-row {
-  background: #f8d7da !important;
-  color: #721c24;
-  font-weight: bold;
-}
-
-.ok-row {
-  background: #d4edda !important;
-  color: #155724;
-}
-
-#floatingNote {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #ff9800;
-  color: white;
-  padding: 12px 18px;
-  border-radius: 8px;
-  font-weight: bold;
-  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
-  animation: floatNote 3s infinite alternate;
-}
-
-#highestWasteNote {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  background: #1976d2;
-  color: white;
-  padding: 12px 18px;
-  border-radius: 8px;
-  font-weight: bold;
-  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
-  animation: floatNote 3s infinite alternate;
-}
-
-@keyframes floatNote {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-8px); }
 }
