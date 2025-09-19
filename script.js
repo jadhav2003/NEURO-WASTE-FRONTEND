@@ -1,6 +1,6 @@
 let chartInstances = {};
 
-// File Upload Handling
+// CSV Upload
 document.getElementById("csvFile").addEventListener("change", function (event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -14,6 +14,7 @@ document.getElementById("csvFile").addEventListener("change", function (event) {
   });
 });
 
+// Chart Renderer
 function renderChart(canvasId, labels, values) {
   if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
 
@@ -53,12 +54,13 @@ function renderChart(canvasId, labels, values) {
   });
 }
 
+// Render Localities + Notifications
 function renderLocalities(data) {
   const container = document.getElementById("localitiesContainer");
   container.innerHTML = "";
 
   const notificationTable = document.querySelector("#notificationTable tbody");
-  notificationTable.innerHTML = ""; // clear old alerts
+  notificationTable.innerHTML = "";
 
   const localityMap = {};
   const localityTotals = {};
@@ -84,7 +86,7 @@ function renderLocalities(data) {
     }
   }
   document.getElementById("highestWasteNote").innerText =
-    `📍 Highest Waste Collected: ${highestLocality}`;
+    `🚮 Highest Waste Collected: ${highestLocality}`;
 
   Object.keys(localityMap).forEach((locality, index) => {
     const rows = localityMap[locality];
@@ -114,12 +116,16 @@ function renderLocalities(data) {
 
     const overallAvg = (totalConf / totalCount).toFixed(2);
 
-    // ✅ Add notification if bin is full
-    if (overallAvg <= 85) {
-      const row = document.createElement("tr");
+    // ✅ Alert if > 85
+    const row = document.createElement("tr");
+    if (overallAvg > 85) {
+      row.className = "alert-row";
       row.innerHTML = `<td>${locality}</td><td>⚠️ Bin Full – Please Dump</td>`;
-      notificationTable.appendChild(row);
+    } else {
+      row.className = "ok-row";
+      row.innerHTML = `<td>${locality}</td><td>✅ Normal</td>`;
     }
+    notificationTable.appendChild(row);
 
     // Horizontal card
     const card = document.createElement("div");
@@ -149,3 +155,12 @@ function renderLocalities(data) {
     renderChart(`chartCanvas_${index}`, labels, values);
   });
 }
+
+// 🕒 Live Clock
+function updateClock() {
+  const now = new Date();
+  document.getElementById("clock").textContent =
+    now.toLocaleDateString() + " " + now.toLocaleTimeString();
+}
+setInterval(updateClock, 1000);
+updateClock();
