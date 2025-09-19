@@ -1,77 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Neuro Waste Eco Bins</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuroWaste Smart Bins</title>
+  <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
 <body>
   <!-- Navbar -->
   <nav class="navbar">
-   <div class="logo">♻️ Neuro Waste </div>
-    <ul class="nav-links">
-      <li><a href="#">Command Hub</a></li>
-      <li><a href="#">Service Zones</a></li>
-      <li><a href="#">Eco Crew</a></li>
-      <li><a href="#">Victory Board</a></li>
-      <li><a href="#">Trackr</a></li>
-      <li><a href="#">Eco Notes</a></li>
+    <div class="logo">♻️ NeuroWaste Smart Bins</div>
+    <ul>
+      <li><a href="#dashboard">Dashboard</a></li>
+      <li><a href="#collectors">Collectors</a></li>
+      <li><a href="#localities">Localities</a></li>
+      <li><a href="#notifications">Notifications</a></li>
+      <li><a href="#reports">Reports</a></li>
     </ul>
     <button id="darkModeToggle">🌙</button>
   </nav>
 
-  <!-- Floating Alerts -->
-  <div id="floatingMessage" class="floating-message"></div>
-  <div id="mostFilledBin" class="floating-message right"></div>
-
-  <!-- Dashboard Section -->
-  <section class="Command Hub">
-    <div class="chart-container">
-      <h2>Waste Distribution</h2>
-      <canvas id="wastePieChart"></canvas>
-    </div>
-    <div class="chart-container">
-      <h2>Average Confidence by Location</h2>
-      <canvas id="avgBarChart"></canvas>
-    </div>
-    <div class="notifications">
-      <h2>Eco Notes</h2>
-      <ul id="notificationList"></ul>
-    </div>
-  </section>
-
-  <!-- Collector Leaderboard -->
-  <section class="Victory Board">
-    <h2>Eco Crew Victory Board</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Eco Crew</th>
-          <th>Points</th>
-          <th>Profile</th>
-        </tr>
-      </thead>
-      <tbody id="leaderboardTable"></tbody>
-    </table>
-  </section>
-
-  <!-- Collector Profile Modal -->
-  <div id="collectorModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2 id="collectorName"></h2>
-      <p id="collectorDetails"></p>
-    </div>
+  <!-- File Upload -->
+  <div class="upload-container">
+    <input type="file" id="csvFile" accept=".csv" />
   </div>
 
-  <!-- Reports & Feedback -->
-  <section class="reports">
-    <button id="downloadReport">📥 Download Report</button>
-    <h2>Feedback</h2>
-    <textarea placeholder="Share your feedback..."></textarea>
-    <button>Submit</button>
+  <!-- Floating Messages -->
+  <div id="floatingMessage" class="floating-message">Please throw waste in Neuro Bins 🗑️</div>
+  <div id="alertMessage" class="floating-message alert"></div>
+  <div id="highestBinMessage" class="floating-message highlight"></div>
+
+  <!-- Dashboard Section -->
+  <section id="dashboard">
+    <h2>📊 Waste Overview</h2>
+    <div id="localitiesContainer"></div>
+  </section>
+
+  <!-- Collectors Section -->
+  <section id="collectors">
+    <h2>👷 Collector Leaderboard</h2>
+    <div id="collectorLeaderboard" class="leaderboard"></div>
+  </section>
+
+  <!-- Notifications Section -->
+  <section id="notifications">
+    <h2>🚨 Notifications</h2>
+    <div id="notificationsPanel" class="notifications-panel"></div>
+  </section>
+
+  <!-- Reports Section -->
+  <section id="reports">
+    <h2>📥 Download Reports</h2>
+    <button id="downloadReport">Download CSV Report</button>
+    <button id="feedbackBtn">📢 Report Overflow</button>
   </section>
 
   <script src="script.js"></script>
